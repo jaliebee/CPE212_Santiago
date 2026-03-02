@@ -1,0 +1,117 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+    - name: Install Updates (CentOS)
+      tags: always
+      dnf:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: Install Updates (Ubuntu)
+      tags: always
+      apt:
+        upgrade: yes
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: workstations
+  become: true
+  tasks:
+
+    - name: install unzip
+      package:
+        name: unzip
+        state: present
+
+    - name: install terraform
+      unarchive:
+        src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: 0755
+        owner: root
+        group: root
+
+- hosts: web_servers
+  tags: apache,apache2,ubuntu
+  become: true
+  tasks:
+
+    - name: Install Apache and PHP for Ubuntu Servers
+      apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Install Apache and PHP for CentOS Servers
+      tags: apache,centos,httpd
+      dnf:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Start httpd (CentOS)
+      tags: apache, centos, httpd
+      service:
+        name: httpd
+        state: started
+      when: ansible_distribution == "CentOS"
+
+    - name: copy default html file for site
+      tags: apache, apache2, httpd
+      copy:
+        src: files/default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+    - name: Install Mariadb Package(CentOS)
+      tags: centos, db, mariadb
+      yum:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Mariadb Restarting/Enabling
+      service:
+        name: mariadb
+        state: restarted
+        enabled: true
+
+    - name: Install Mariadb Package(Ubuntu)
+      tags: db, mariadb, ubuntu
+      apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Mariadb Restarting/Enabling
+      service:
+        name: mariadb
+        state: restarted
+        enabled: true
+
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+    - name: Install samba package
+      tags: samba
+      package:
+        name: samba
+        state: latest
