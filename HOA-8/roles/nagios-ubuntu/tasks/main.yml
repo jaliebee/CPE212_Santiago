@@ -1,0 +1,13 @@
+---
+- name: Install Nagios on Ubuntu
+  apt:
+    name: nagios4
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Start Nagios Service
+  service:
+    name: nagios
+    state: started
+    enabled: yes
