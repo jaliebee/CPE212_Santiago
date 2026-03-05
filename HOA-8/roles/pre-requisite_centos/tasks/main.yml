@@ -1,8 +1,24 @@
-- name: Install and Start Pre-Requisites on CentOS
-  yum:
-    name: 
+---
+- name: Install EPEL repository
+  dnf:
+    name: epel-release
+    state: present
+  when: ansible_distribution == "CentOS"
+
+- name: Install Nagios Pre-Requisites on CentOS
+  dnf:
+    name:
       - httpd
       - php
+      - php-gd
+      - gcc
+      - glibc
+      - glibc-common
+      - wget
+      - unzip
+      - make
+      - net-snmp
+      - nagios-plugins
     state: present
     update_cache: yes
   when: ansible_distribution == "CentOS"
@@ -12,4 +28,4 @@
     name: httpd
     state: started
     enabled: yes
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "CentOS"

@@ -1,8 +1,10 @@
 ---
 - name: Install and Start Nagios on Ubuntu & CentOS
-  hosts: all
+  hosts: web_servers
   become: yes
 
   roles:
+    - pre-requisite_ubuntu
+    - pre-requisite_centos
     - nagios-ubuntu
     - nagios-centos

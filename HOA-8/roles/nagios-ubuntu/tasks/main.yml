@@ -6,8 +6,9 @@
     update_cache: yes
   when: ansible_distribution == "Ubuntu"
 
-- name: Start Nagios Service
+- name: Start Nagios Service on Ubuntu
   service:
     name: nagios4
     state: started
     enabled: yes
+  when: ansible_distribution == "Ubuntu"

@@ -5,9 +5,9 @@
     state: present
   when: ansible_distribution == "CentOS"
 
-- name: Start Nagios Service
+- name: Start Nagios Service on CentOS
   service:
-    name: nagios4
+    name: nagios
     state: started
     enabled: yes
   when: ansible_distribution == "CentOS"
