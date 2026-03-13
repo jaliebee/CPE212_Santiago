@@ -1,0 +1,16 @@
+---
+- name: Install Prometheus on Ubuntu
+  hosts: ubuntu_servers
+  become: true
+  gather_facts: yes
+  roles:
+    - prometheus
+  tags: ubuntu
+
+- name: Install Prometheus on CentOS
+  hosts: centos_servers
+  become: true
+  gather_facts: yes
+  roles:
+    - prometheus
+  tags: centos

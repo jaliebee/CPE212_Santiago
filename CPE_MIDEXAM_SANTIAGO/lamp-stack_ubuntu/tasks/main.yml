@@ -1,0 +1,35 @@
+---
+- name: Install Apache, MySQL, and PHP
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apache2
+    - mysql-server
+    - php
+    - libapache2-mod-php
+    - php-mysql
+
+- name: Start and enable Apache
+  systemd:
+    name: apache2
+    enabled: yes
+    state: started
+
+- name: Install MariaDB on Ubuntu database host
+  apt:
+    name: "{{ lamp_db_packages_ubuntu }}"
+    state: present
+    update_cache: yes
+  when:
+    - lamp_component == 'db'
+    - ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Enable and start MariaDB on Ubuntu database host
+  systemd:
+    name: mariadb
+    enabled: yes
+    state: started
+  when:
+    - lamp_component == 'db'
+    - ansible_facts['distribution'] == "Ubuntu"

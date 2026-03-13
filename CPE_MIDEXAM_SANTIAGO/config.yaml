@@ -1,0 +1,15 @@
+---
+- name: Ubuntu (Elastic Stack, Lamp Stack, Nagios)
+  hosts: ubuntu
+  become: true
+  
+  roles:
+
+- name: CentOS (Elastic Stack and Lamp Stack)
+  hosts: centos
+  become: true
+  
+  roles:
+    - pre-requisites
+    - elastic-stack_centos
+    - lamp-stack_centos

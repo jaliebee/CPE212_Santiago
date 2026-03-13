@@ -1,0 +1,29 @@
+---
+- name: Install Prometheus on Ubuntu
+  apt:
+    name: prometheus
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: ubuntu
+
+- name: Install EPEL repository for CentOS
+  dnf:
+    name: epel-release
+    state: present
+  when: ansible_distribution == "CentOS"
+  tags: centos
+
+- name: Install Prometheus on CentOS
+  dnf:
+    name: prometheus
+    state: present
+  when: ansible_distribution == "CentOS"
+  tags: centos
+
+- name: Start Prometheus service
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+  tags: prometheus
